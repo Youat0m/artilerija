@@ -10,27 +10,42 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public class ArtGun {
+
+    private final static Artilerija plugin = Artilerija.getInstance();
+
     private final float maxCharge;
     private float charge;
     private final float spread;
     private Projectile projectile;
     private ArmorStand stand;
 
-    public ArtGun(float spread, ArmorStand stand, float maxCharge) {
+    public ArtGun(ArmorStand stand, float spread, float maxCharge, float charge, Projectile projectile) {
         this.spread = spread;
         this.stand = stand;
         this.maxCharge = maxCharge;
+        this.charge = charge;
+        this.projectile = projectile;
     }
 
-    public ArtGun create(Location loc){
+    public ArtGun(float maxCharge, float spread) {
+        this.maxCharge = maxCharge;
+        this.spread = spread;
+    }
+
+    public ArmorStand create(Location loc){
         if(stand ==  null) {
             stand = loc.getWorld().spawn(loc, ArmorStand.class);
         }else{
             stand.teleport(loc);
         }
-        return this;
+        PersistentDataContainer container = stand.getPersistentDataContainer();
+        container.set(plugin.getSpreadKey(), PersistentDataType.FLOAT, spread);
+        container.set(plugin.getMaxChargeKey(), PersistentDataType.FLOAT, maxCharge);
+        container.set(plugin.getChargeKey(), PersistentDataType.FLOAT, charge);
+        return this.stand;
     }
 
     public boolean isExist(){
@@ -41,22 +56,30 @@ public class ArtGun {
         return stand;
     }
 
-
-    public static ArmorStand getInWorld(Location loc){
+    //todo решить удалять или нет
+    //todo eсли нет, то переписать под Optional
+    public static ArtGun getInWorld(Location loc){
         Collection<Entity> collection = loc.getWorld().getNearbyEntities(loc, 1, 1, 1, (t -> t instanceof ArmorStand));
-        return (ArmorStand) collection.stream().filter(
-                e -> e.getPersistentDataContainer().has(Artilerija.getInstance().getSpreadKey()) &&
-                e.getPersistentDataContainer().has(Artilerija.getInstance().getPowerKey())).iterator().next();
+        return getFromStand((ArmorStand) collection.stream().filter(
+                e -> e.getPersistentDataContainer().has(plugin.getSpreadKey()) &&
+                e.getPersistentDataContainer().has(plugin.getPowerKey())).iterator().next()).orElseThrow();
 
     }
-    private static ArtGun getFromStand(ArmorStand stand){
-        Artilerija plugin = Artilerija.getInstance();
+    public static Optional<ArtGun> getFromStand(ArmorStand stand){
         PersistentDataContainer container = stand.getPersistentDataContainer();
-
-        return new ArtGun(container.get(plugin.getSpreadKey(), PersistentDataType.FLOAT), stand, );
+        if(container.has(plugin.getChargeKey()) &&
+                container.has(plugin.getMaxChargeKey()) &&
+                container.has(plugin.getSpreadKey()) &&
+                container.has(plugin.getProjectileKey()))
+            return Optional.of(new ArtGun(stand,
+                container.get(plugin.getSpreadKey(), PersistentDataType.FLOAT),
+                container.get(plugin.getMaxChargeKey(), PersistentDataType.FLOAT),
+                container.get(plugin.getChargeKey(), PersistentDataType.FLOAT),
+                (Projectile)container.get(plugin.getProjectileKey(), new Projectile(0))));
+        return Optional.empty();
     }
 
-    public void shoot(){
+    public Boolean shoot(){
         if(projectile != null){
             if(charge >= maxCharge) blowUp();
             float speed = this.charge / projectile.getWeight();
@@ -67,7 +90,9 @@ public class ArtGun {
             arr.setColor(Color.RED);
             arr.setGlowing(true);
             arr.customName(Component.text("atrtelerija"));
+            return true;
         }
+        return false;
     }
     public void point(Location loc){
         Location location = stand.getLocation();

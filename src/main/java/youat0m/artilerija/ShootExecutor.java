@@ -18,19 +18,9 @@ public class ShootExecutor implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(sender instanceof Player p){
             Artilerija plugin = Artilerija.getInstance();
-            if(p.getTargetEntity(3) instanceof ArmorStand stand &&
-                    stand.getPersistentDataContainer().has(plugin.getSpeedKey()) &&
-                    stand.getPersistentDataContainer().has(plugin.getSpreadKey()) &&
-                    stand.getPersistentDataContainer().has(plugin.getPowerKey())) {
-                Location loc = stand.getEyeLocation();
-                PersistentDataContainer container = stand.getPersistentDataContainer();
-                Arrow arr = p.getWorld().spawnArrow(loc, loc.getDirection(), container.get(plugin.getSpeedKey(), PersistentDataType.FLOAT),
-                        container.get(plugin.getSpreadKey(), PersistentDataType.FLOAT));
-                arr.setDamage(container.get(plugin.getPowerKey(), PersistentDataType.DOUBLE));
-                arr.setColor(Color.RED);
-                arr.setGlowing(true);
-                arr.customName(Component.text("atrtelerija"));
-                return true;
+            if(p.getTargetEntity(3) instanceof ArmorStand stand && !ArtGun.getFromStand(stand).isEmpty()){
+                if(!ArtGun.getFromStand(stand).orElseThrow().shoot())
+                    p.sendMessage("нет заряда");
             }else
                 p.sendMessage("смотри на пушку, гений");
         }

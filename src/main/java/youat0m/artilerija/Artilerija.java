@@ -13,8 +13,10 @@ public final class Artilerija extends JavaPlugin {
 
     private final NamespacedKey spreadKey = new NamespacedKey(this, "spread");
     private final NamespacedKey powerKey = new NamespacedKey(this, "power");
-    private final NamespacedKey weightKey = new NamespacedKey(this, "weight");
     private final NamespacedKey maxChargeKey = new NamespacedKey(this, "maxCharge");
+    private final NamespacedKey chargeKey = new NamespacedKey(this, "charge");
+    private final NamespacedKey projectileKey = new NamespacedKey(this, "projectile");
+
 
     @Override
     public void onEnable() {
@@ -32,6 +34,10 @@ public final class Artilerija extends JavaPlugin {
         return instanse;
     }
 
+    public NamespacedKey getChargeKey() {
+        return chargeKey;
+    }
+
     public NamespacedKey getMaxChargeKey() {
         return maxChargeKey;
     }
@@ -44,7 +50,7 @@ public final class Artilerija extends JavaPlugin {
         return powerKey;
     }
 
-    public NamespacedKey getWeightKey() {
-        return weightKey;
+    public NamespacedKey getProjectileKey() {
+        return projectileKey;
     }
 }
