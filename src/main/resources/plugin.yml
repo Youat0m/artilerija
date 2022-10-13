@@ -1,0 +1,12 @@
+name: Artelerija
+version: '${project.version}'
+main: youat0m.artelerija.Artelerija
+api-version: 1.18
+authors: [ YouAt0m ]
+commands:
+  shoot:
+    usage: /shoot
+  summonArt:
+    usage: /summot art
+  createammo:
+    usage: /createammo <Weight> <Power>
