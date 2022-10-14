@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.Optional;
 
 public class Projectile implements PersistentDataType<byte[], Projectile>{
@@ -22,6 +21,8 @@ public class Projectile implements PersistentDataType<byte[], Projectile>{
         this.power = power;
         this.weight = (float) (power*10);
     }
+    public Projectile(){}
+
     private static Artilerija plugn = Artilerija.getInstance();
     private float weight;
     private double power;

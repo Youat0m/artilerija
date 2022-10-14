@@ -45,6 +45,7 @@ public class ArtGun {
         container.set(plugin.getSpreadKey(), PersistentDataType.FLOAT, spread);
         container.set(plugin.getMaxChargeKey(), PersistentDataType.FLOAT, maxCharge);
         container.set(plugin.getChargeKey(), PersistentDataType.FLOAT, charge);
+        container.set(plugin.getProjectileKey(), new Projectile(), projectile);
         return this.stand;
     }
 
@@ -75,7 +76,7 @@ public class ArtGun {
                 container.get(plugin.getSpreadKey(), PersistentDataType.FLOAT),
                 container.get(plugin.getMaxChargeKey(), PersistentDataType.FLOAT),
                 container.get(plugin.getChargeKey(), PersistentDataType.FLOAT),
-                (Projectile)container.get(plugin.getProjectileKey(), new Projectile(0))));
+                container.get(plugin.getProjectileKey(), new Projectile(0))));
         return Optional.empty();
     }
 
@@ -102,9 +103,11 @@ public class ArtGun {
     }
     public void reload(Projectile projectile1){
         this.projectile = projectile1;
+        stand.getPersistentDataContainer().set(plugin.getProjectileKey(), new Projectile(), projectile1);
     }
     public void reloadPowder(float charge){
         this.charge = charge;
+        stand.getPersistentDataContainer().set(plugin.getChargeKey(), PersistentDataType.FLOAT, charge);
     }
     public void blowUp(){
         stand.getWorld().createExplosion(stand.getLocation(), 10);

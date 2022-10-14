@@ -13,8 +13,8 @@ public class SummonManager implements CommandExecutor {
             Artilerija plugin = Artilerija.getInstance();
             ArtGun gun = new ArtGun(Float.parseFloat(args[0]), Float.parseFloat(args[1]));
             gun.create(p.getLocation());
-            gun.reload(new Projectile(1));
-            gun.reloadPowder(50);
+            gun.reload(new Projectile(Float.parseFloat(args[2])));
+            gun.reloadPowder(Integer.parseInt(args[3]));
         }
         return true;
     }
