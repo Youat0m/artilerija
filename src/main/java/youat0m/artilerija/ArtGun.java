@@ -45,7 +45,7 @@ public class ArtGun {
         container.set(plugin.getSpreadKey(), PersistentDataType.FLOAT, spread);
         container.set(plugin.getMaxChargeKey(), PersistentDataType.FLOAT, maxCharge);
         container.set(plugin.getChargeKey(), PersistentDataType.FLOAT, charge);
-        container.set(plugin.getProjectileKey(), new Projectile(), projectile);
+        container.set(plugin.getProjectileKey(), new Projectile(), new Projectile());
         return this.stand;
     }
 
@@ -68,6 +68,7 @@ public class ArtGun {
     }
     public static Optional<ArtGun> getFromStand(ArmorStand stand){
         PersistentDataContainer container = stand.getPersistentDataContainer();
+        System.out.println(container.get(plugin.getProjectileKey(), new Projectile()).getPower());
         if(container.has(plugin.getChargeKey()) &&
                 container.has(plugin.getMaxChargeKey()) &&
                 container.has(plugin.getSpreadKey()) &&
@@ -76,12 +77,12 @@ public class ArtGun {
                 container.get(plugin.getSpreadKey(), PersistentDataType.FLOAT),
                 container.get(plugin.getMaxChargeKey(), PersistentDataType.FLOAT),
                 container.get(plugin.getChargeKey(), PersistentDataType.FLOAT),
-                container.get(plugin.getProjectileKey(), new Projectile(0))));
+                container.get(plugin.getProjectileKey(), new Projectile())));
         return Optional.empty();
     }
 
     public Boolean shoot(){
-        if(projectile != null){
+        if(projectile != null && projectile.getPower() != 0){
             if(charge >= maxCharge) blowUp();
             float speed = this.charge / projectile.getWeight();
             Location loc = stand.getEyeLocation();
@@ -91,23 +92,30 @@ public class ArtGun {
             arr.setColor(Color.RED);
             arr.setGlowing(true);
             arr.customName(Component.text("atrtelerija"));
+            charge = 0;
             return true;
         }
         return false;
     }
     public void point(Location loc){
-        Location location = stand.getLocation();
-        location.setPitch(loc.getPitch());
-        location.setYaw(loc.getYaw());
-        stand.teleport(loc);
+        if (stand != null) {
+            Location location = stand.getLocation();
+            location.setPitch(loc.getPitch());
+            location.setYaw(loc.getYaw());
+            stand.teleport(loc);
+        }
     }
     public void reload(Projectile projectile1){
         this.projectile = projectile1;
-        stand.getPersistentDataContainer().set(plugin.getProjectileKey(), new Projectile(), projectile1);
+        if (stand != null) {
+            stand.getPersistentDataContainer().set(plugin.getProjectileKey(), new Projectile(), projectile1);
+        }
     }
     public void reloadPowder(float charge){
         this.charge = charge;
-        stand.getPersistentDataContainer().set(plugin.getChargeKey(), PersistentDataType.FLOAT, charge);
+        if (stand != null) {
+            stand.getPersistentDataContainer().set(plugin.getChargeKey(), PersistentDataType.FLOAT, charge);
+        }
     }
     public void blowUp(){
         stand.getWorld().createExplosion(stand.getLocation(), 10);

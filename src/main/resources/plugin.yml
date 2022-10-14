@@ -1,6 +1,6 @@
-name: Artelerija
+name: Artilerija
 version: '${project.version}'
-main: youat0m.artelerija.Artelerija
+main: youat0m.artilerija.Artilerija
 api-version: 1.18
 authors: [ YouAt0m ]
 commands:

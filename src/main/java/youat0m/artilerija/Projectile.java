@@ -13,9 +13,10 @@ import org.jetbrains.annotations.NotNull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Optional;
 
-public class Projectile implements PersistentDataType<byte[], Projectile>{
+public class Projectile implements PersistentDataType<byte[], Projectile>, Serializable {
 
     public Projectile(double power) {
         this.power = power;
