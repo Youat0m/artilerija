@@ -6,11 +6,17 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.Optional;
 
-public class Projectile implements PersistentDataType{
+public class Projectile implements PersistentDataType<byte[], Projectile>{
 
     public Projectile(double power) {
         this.power = power;
@@ -43,26 +49,39 @@ public class Projectile implements PersistentDataType{
         return power;
     }
 
-    //todo доделать DataType
     @Override
-    public @NotNull Class getPrimitiveType() {
-        return null;
+    public @NotNull Class<byte[]> getPrimitiveType() {
+        return byte[].class;
     }
 
     @Override
-    public @NotNull Class getComplexType() {
-        return null;
+    public @NotNull Class<Projectile> getComplexType() {
+        return Projectile.class;
     }
 
-    @NotNull
     @Override
-    public Object toPrimitive(@NotNull Object complex, @NotNull PersistentDataAdapterContext context) {
-        return null;
+    public byte @NotNull [] toPrimitive(@NotNull Projectile complex, @NotNull PersistentDataAdapterContext context) {
+        try {
+            ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
+            BukkitObjectOutputStream outputStream = new BukkitObjectOutputStream(arrayOutputStream);
+            outputStream.writeObject(complex);
+            outputStream.close();
+            return arrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new byte[0];
     }
 
-    @NotNull
     @Override
-    public Object fromPrimitive(@NotNull Object primitive, @NotNull PersistentDataAdapterContext context) {
-        return null;
+    public @NotNull Projectile fromPrimitive(@NotNull byte[] primitive, @NotNull PersistentDataAdapterContext context) {
+        try {
+            ByteArrayInputStream arrayInputStream = new ByteArrayInputStream(primitive);
+            BukkitObjectInputStream inputStream = new BukkitObjectInputStream(arrayInputStream);
+            return (Projectile) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return new Projectile(0);
     }
 }
