@@ -7,6 +7,6 @@ commands:
   shoot:
     usage: /shoot
   summonArt:
-    usage: /summot art
+    usage: /summot art <максимальный заряд> <разброс) <сила взрыва снаряда> <заряд>
   createammo:
-    usage: /createammo <Weight> <Power>
+    usage: /createammo <Weight> <Power> (не работает)
