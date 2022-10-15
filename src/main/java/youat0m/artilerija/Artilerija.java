@@ -13,6 +13,7 @@ public final class Artilerija extends JavaPlugin {
 
     private final NamespacedKey spreadKey = new NamespacedKey(this, "spread");
     private final NamespacedKey powerKey = new NamespacedKey(this, "power");
+    private final NamespacedKey weightKey = new NamespacedKey(this, "weight");
     private final NamespacedKey maxChargeKey = new NamespacedKey(this, "maxCharge");
     private final NamespacedKey chargeKey = new NamespacedKey(this, "charge");
     private final NamespacedKey projectileKey = new NamespacedKey(this, "projectile");
@@ -22,6 +23,8 @@ public final class Artilerija extends JavaPlugin {
     public void onEnable() {
         getCommand("shoot").setExecutor(new ShootExecutor());
         getCommand("summonArt").setExecutor(new SummonManager());
+        getCommand("createProjectile").setExecutor(new CreateProjectile());
+        getCommand("reloadGun").setExecutor(new ReloadExecutor());
         getServer().getPluginManager().registerEvents(new ExplosionHandler(), this);
     }
 
@@ -52,5 +55,9 @@ public final class Artilerija extends JavaPlugin {
 
     public NamespacedKey getProjectileKey() {
         return projectileKey;
+    }
+
+    public NamespacedKey getWeightKey() {
+        return weightKey;
     }
 }

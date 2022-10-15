@@ -17,17 +17,15 @@ public class ArtGun {
     private final static Artilerija plugin = Artilerija.getInstance();
 
     private final float maxCharge;
-    private float charge;
     private final float spread;
-    private Projectile projectile;
+    private cartridge cartridge = new cartridge();
     private ArmorStand stand;
 
-    public ArtGun(ArmorStand stand, float spread, float maxCharge, float charge, Projectile projectile) {
+    public ArtGun(ArmorStand stand, float spread, float maxCharge, cartridge cartridge) {
         this.spread = spread;
         this.stand = stand;
         this.maxCharge = maxCharge;
-        this.charge = charge;
-        this.projectile = projectile;
+        this.cartridge = cartridge;
     }
 
     public ArtGun(float maxCharge, float spread) {
@@ -44,8 +42,7 @@ public class ArtGun {
         PersistentDataContainer container = stand.getPersistentDataContainer();
         container.set(plugin.getSpreadKey(), PersistentDataType.FLOAT, spread);
         container.set(plugin.getMaxChargeKey(), PersistentDataType.FLOAT, maxCharge);
-        container.set(plugin.getChargeKey(), PersistentDataType.FLOAT, charge);
-        container.set(plugin.getProjectileKey(), new Projectile(), new Projectile());
+        container.set(plugin.getProjectileKey(), new cartridge(), cartridge);
         return this.stand;
     }
 
@@ -68,7 +65,7 @@ public class ArtGun {
     }
     public static Optional<ArtGun> getFromStand(ArmorStand stand){
         PersistentDataContainer container = stand.getPersistentDataContainer();
-        System.out.println(container.get(plugin.getProjectileKey(), new Projectile()).getPower());
+        System.out.println(container.get(plugin.getProjectileKey(), new cartridge()).getPower());
         if(container.has(plugin.getChargeKey()) &&
                 container.has(plugin.getMaxChargeKey()) &&
                 container.has(plugin.getSpreadKey()) &&
@@ -76,23 +73,22 @@ public class ArtGun {
             return Optional.of(new ArtGun(stand,
                 container.get(plugin.getSpreadKey(), PersistentDataType.FLOAT),
                 container.get(plugin.getMaxChargeKey(), PersistentDataType.FLOAT),
-                container.get(plugin.getChargeKey(), PersistentDataType.FLOAT),
-                container.get(plugin.getProjectileKey(), new Projectile())));
+                container.get(plugin.getProjectileKey(), new cartridge())));
         return Optional.empty();
     }
 
     public Boolean shoot(){
-        if(projectile != null && projectile.getPower() != 0){
-            if(charge >= maxCharge) blowUp();
-            float speed = this.charge / projectile.getWeight();
+        if(cartridge != null && cartridge.getPower() != 0){
+            if(cartridge.getCharge() >= maxCharge) blowUp();
+            float speed = cartridge.getCharge() / cartridge.getWeight();
             Location loc = stand.getEyeLocation();
             Arrow arr = loc.getWorld().spawnArrow(loc, loc.getDirection(), speed,
                     this.spread);
-            arr.setDamage(projectile.getPower());
+            arr.setDamage(cartridge.getPower());
             arr.setColor(Color.RED);
             arr.setGlowing(true);
             arr.customName(Component.text("atrtelerija"));
-            charge = 0;
+            this.cartridge = new cartridge();
             return true;
         }
         return false;
@@ -105,16 +101,13 @@ public class ArtGun {
             stand.teleport(loc);
         }
     }
-    public void reload(Projectile projectile1){
-        this.projectile = projectile1;
-        if (stand != null) {
-            stand.getPersistentDataContainer().set(plugin.getProjectileKey(), new Projectile(), projectile1);
-        }
-    }
-    public void reloadPowder(float charge){
-        this.charge = charge;
-        if (stand != null) {
-            stand.getPersistentDataContainer().set(plugin.getChargeKey(), PersistentDataType.FLOAT, charge);
+    public void reload(cartridge cartridge1){
+        if(cartridge1.getPower()==0 && cartridge1.getWeight() == 0)
+            this.cartridge.setCharge(cartridge1.getCharge());
+        else
+            this.cartridge = cartridge1;
+        if (!isExist()) {
+            stand.getPersistentDataContainer().set(plugin.getProjectileKey(), new cartridge(), cartridge);
         }
     }
     public void blowUp(){
