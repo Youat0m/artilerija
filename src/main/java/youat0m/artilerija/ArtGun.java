@@ -18,10 +18,10 @@ public class ArtGun {
 
     private final float maxCharge;
     private final float spread;
-    private cartridge cartridge = new cartridge();
+    private Cartridge cartridge = Cartridge.getEmpty();
     private ArmorStand stand;
 
-    public ArtGun(ArmorStand stand, float spread, float maxCharge, cartridge cartridge) {
+    public ArtGun(ArmorStand stand, float spread, float maxCharge, Cartridge cartridge) {
         this.spread = spread;
         this.stand = stand;
         this.maxCharge = maxCharge;
@@ -42,12 +42,12 @@ public class ArtGun {
         PersistentDataContainer container = stand.getPersistentDataContainer();
         container.set(plugin.getSpreadKey(), PersistentDataType.FLOAT, spread);
         container.set(plugin.getMaxChargeKey(), PersistentDataType.FLOAT, maxCharge);
-        container.set(plugin.getProjectileKey(), new cartridge(), cartridge);
+        container.set(plugin.getProjectileKey(), Cartridge.getEmpty(), cartridge);
         return this.stand;
     }
 
     public boolean isExist(){
-        return stand !=  null;
+        return stand != null;
     }
 
     public ArmorStand getStand(){
@@ -65,15 +65,13 @@ public class ArtGun {
     }
     public static Optional<ArtGun> getFromStand(ArmorStand stand){
         PersistentDataContainer container = stand.getPersistentDataContainer();
-        System.out.println(container.get(plugin.getProjectileKey(), new cartridge()).getPower());
-        if(container.has(plugin.getChargeKey()) &&
-                container.has(plugin.getMaxChargeKey()) &&
+        if(container.has(plugin.getMaxChargeKey()) &&
                 container.has(plugin.getSpreadKey()) &&
                 container.has(plugin.getProjectileKey()))
             return Optional.of(new ArtGun(stand,
                 container.get(plugin.getSpreadKey(), PersistentDataType.FLOAT),
                 container.get(plugin.getMaxChargeKey(), PersistentDataType.FLOAT),
-                container.get(plugin.getProjectileKey(), new cartridge())));
+                container.get(plugin.getProjectileKey(), Cartridge.getEmpty())));
         return Optional.empty();
     }
 
@@ -88,7 +86,9 @@ public class ArtGun {
             arr.setColor(Color.RED);
             arr.setGlowing(true);
             arr.customName(Component.text("atrtelerija"));
-            this.cartridge = new cartridge();
+            cartridge = Cartridge.getEmpty();
+            if(isExist())
+                stand.getPersistentDataContainer().set(plugin.getProjectileKey(), Cartridge.getEmpty(), cartridge);
             return true;
         }
         return false;
@@ -98,17 +98,19 @@ public class ArtGun {
             Location location = stand.getLocation();
             location.setPitch(loc.getPitch());
             location.setYaw(loc.getYaw());
-            stand.teleport(loc);
+            stand.teleport(location);
         }
     }
-    public void reload(cartridge cartridge1){
-        if(cartridge1.getPower()==0 && cartridge1.getWeight() == 0)
+    public void reload(Cartridge cartridge1){
+        if(cartridge1.getPower()==0 && cartridge1.getWeight() == 0 )
             this.cartridge.setCharge(cartridge1.getCharge());
-        else
+        else if(!cartridge.equals(Cartridge.getEmpty())) {
+            stand.getWorld().dropItem(stand.getLocation(), Cartridge.create(cartridge));
             this.cartridge = cartridge1;
-        if (!isExist()) {
-            stand.getPersistentDataContainer().set(plugin.getProjectileKey(), new cartridge(), cartridge);
-        }
+        }else
+            this.cartridge = cartridge1;
+        if (isExist())
+            stand.getPersistentDataContainer().set(plugin.getProjectileKey(), Cartridge.getEmpty(), cartridge);
     }
     public void blowUp(){
         stand.getWorld().createExplosion(stand.getLocation(), 10);

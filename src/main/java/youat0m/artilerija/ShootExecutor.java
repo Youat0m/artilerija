@@ -13,7 +13,7 @@ public class ShootExecutor implements CommandExecutor {
         if(sender instanceof Player p){
             Artilerija plugin = Artilerija.getInstance();
             //todo нормально под Optional переписать
-            if(p.getTargetEntity(3) instanceof ArmorStand stand && !ArtGun.getFromStand(stand).isEmpty()){
+            if(p.getTargetEntity(3) instanceof ArmorStand stand && ArtGun.getFromStand(stand).isPresent()){
                 if(!ArtGun.getFromStand(stand).orElseThrow().shoot())
                     p.sendMessage("нет заряда");
             }else
