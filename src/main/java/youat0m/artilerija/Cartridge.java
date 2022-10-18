@@ -2,9 +2,7 @@ package youat0m.artilerija;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataAdapterContext;
@@ -18,9 +16,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.Optional;
 
+//todo переписать по интрефейс
 public class Cartridge implements PersistentDataType<byte[], Cartridge>, Serializable {
 
     public Cartridge(float weight, double power, float charge) {

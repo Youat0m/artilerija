@@ -7,8 +7,10 @@ commands:
   shoot:
     usage: /shoot
   summonArt:
-    usage: /summot art <максимальный заряд> <разброс) <сила взрыва снаряда> <заряд>
+    usage: /summot art <максимальный заряд> <разброс)
   createProjectile:
-    usage: /createammo <Weight> <Power> (не работает)
+    usage: /createammo <Weight> <Power>
   reloadGun:
     usage: /reloadGun [point]
+  pointGun:
+    usage: /point [pitch] [yaw]

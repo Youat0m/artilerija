@@ -25,6 +25,7 @@ public final class Artilerija extends JavaPlugin {
         getCommand("summonArt").setExecutor(new SummonManager());
         getCommand("createProjectile").setExecutor(new CreateProjectile());
         getCommand("reloadGun").setExecutor(new ReloadExecutor());
+        getCommand("pointGun").setExecutor(new PointExecutor());
         getServer().getPluginManager().registerEvents(new ExplosionHandler(), this);
     }
 

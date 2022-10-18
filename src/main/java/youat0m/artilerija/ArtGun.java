@@ -5,13 +5,12 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.Collection;
 import java.util.Optional;
 
+//todo переписать под интерфейс
 public class ArtGun {
 
     private final static Artilerija plugin = Artilerija.getInstance();
@@ -54,15 +53,6 @@ public class ArtGun {
         return stand;
     }
 
-    //todo решить удалять или нет
-    //todo eсли нет, то переписать под Optional
-    public static ArtGun getInWorld(Location loc){
-        Collection<Entity> collection = loc.getWorld().getNearbyEntities(loc, 1, 1, 1, (t -> t instanceof ArmorStand));
-        return getFromStand((ArmorStand) collection.stream().filter(
-                e -> e.getPersistentDataContainer().has(plugin.getSpreadKey()) &&
-                e.getPersistentDataContainer().has(plugin.getPowerKey())).iterator().next()).orElseThrow();
-
-    }
     public static Optional<ArtGun> getFromStand(ArmorStand stand){
         PersistentDataContainer container = stand.getPersistentDataContainer();
         if(container.has(plugin.getMaxChargeKey()) &&
@@ -94,13 +84,18 @@ public class ArtGun {
         return false;
     }
     public void point(Location loc){
-        if (stand != null) {
-            Location location = stand.getLocation();
-            location.setPitch(loc.getPitch());
-            location.setYaw(loc.getYaw());
-            stand.teleport(location);
+        point(loc.getPitch(), loc.getYaw());
+    }
+
+    public void point(float pitch, float yaw){
+        if(stand != null){
+            Location loc = stand.getLocation();
+            loc.setPitch(pitch);
+            loc.setYaw(yaw);
+            stand.teleport(loc);
         }
     }
+
     public void reload(Cartridge cartridge1){
         if(cartridge1.getPower()==0 && cartridge1.getWeight() == 0 )
             this.cartridge.setCharge(cartridge1.getCharge());

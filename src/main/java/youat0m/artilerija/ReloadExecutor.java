@@ -1,6 +1,5 @@
 package youat0m.artilerija;
 
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,12 +12,8 @@ public class ReloadExecutor implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(sender instanceof Player p && p.getTargetEntity(3) != null && p.getTargetEntity(3) instanceof ArmorStand &&
                 ArtGun.getFromStand((ArmorStand) p.getTargetEntity(3)).isPresent()){
-            ArtGun gun = ArtGun.getFromStand((ArmorStand)p.getTargetEntity(3)).get();
-            if(args.length >= 1 && args[0].equals("point")){
-                gun.point(p.getLocation());
-            }
             Cartridge.getProjectile(p.getInventory().getItemInMainHand()).ifPresent((Cartridge c) -> {
-                gun.reload(c);
+                ArtGun.getFromStand((ArmorStand)p.getTargetEntity(3)).get().reload(c);
                 p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
             });
         }else return false;

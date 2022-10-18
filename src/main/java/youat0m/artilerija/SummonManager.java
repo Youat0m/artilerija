@@ -12,7 +12,8 @@ public class SummonManager implements CommandExecutor {
         if(sender instanceof Player p){
             ArtGun gun = new ArtGun(Float.parseFloat(args[0]), Float.parseFloat(args[1]));
             gun.create(p.getLocation());
+            return true;
         }
-        return true;
+        return false;
     }
 }
