@@ -11,9 +11,9 @@ public class ReloadExecutor implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(sender instanceof Player p && p.getTargetEntity(3) != null && p.getTargetEntity(3) instanceof ArmorStand &&
-                ArtGun.getFromStand((ArmorStand) p.getTargetEntity(3)).isPresent()){
+                ArtGunStand.getFromStand((ArmorStand) p.getTargetEntity(3)).isPresent()){
             Cartridge.getProjectile(p.getInventory().getItemInMainHand()).ifPresent((Cartridge c) -> {
-                ArtGun.getFromStand((ArmorStand)p.getTargetEntity(3)).get().reload(c);
+                ArtGunStand.getFromStand((ArmorStand)p.getTargetEntity(3)).get().reload(c);
                 p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
             });
         }else return false;

@@ -10,7 +10,7 @@ public class CreateProjectile implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(sender instanceof Player p){
-            p.getInventory().addItem(Cartridge.create(Double.parseDouble(args[0]), Float.parseFloat(args[1]), Float.parseFloat(args[2])));
+            p.getInventory().addItem(Cartridge.create(Float.parseFloat(args[0]), Float.parseFloat(args[1]), Float.parseFloat(args[2])));
             return true;
         }
         return false;

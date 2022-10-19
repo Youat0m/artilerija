@@ -5,13 +5,14 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Optional;
 
 //todo переписать под интерфейс
-public class ArtGun {
+public class ArtGunStand implements IArtGun {
 
     private final static Artilerija plugin = Artilerija.getInstance();
 
@@ -20,19 +21,20 @@ public class ArtGun {
     private Cartridge cartridge = Cartridge.getEmpty();
     private ArmorStand stand;
 
-    public ArtGun(ArmorStand stand, float spread, float maxCharge, Cartridge cartridge) {
+    public ArtGunStand(ArmorStand stand, float spread, float maxCharge, Cartridge cartridge) {
         this.spread = spread;
         this.stand = stand;
         this.maxCharge = maxCharge;
         this.cartridge = cartridge;
     }
 
-    public ArtGun(float maxCharge, float spread) {
+    public ArtGunStand(float maxCharge, float spread) {
         this.maxCharge = maxCharge;
         this.spread = spread;
     }
 
-    public ArmorStand create(Location loc){
+    @Override
+    public Entity create(Location loc){
         if(stand ==  null) {
             stand = loc.getWorld().spawn(loc, ArmorStand.class);
         }else{
@@ -45,26 +47,29 @@ public class ArtGun {
         return this.stand;
     }
 
+    static public Optional<IArtGun> getFromStand(ArmorStand stand){
+        PersistentDataContainer container = stand.getPersistentDataContainer();
+        if(container.has(ArtGunStand.plugin.getMaxChargeKey()) &&
+                container.has(ArtGunStand.plugin.getSpreadKey()) &&
+                container.has(ArtGunStand.plugin.getProjectileKey()))
+            return Optional.of(new ArtGunStand(stand,
+                    container.get(ArtGunStand.plugin.getSpreadKey(), PersistentDataType.FLOAT),
+                    container.get(ArtGunStand.plugin.getMaxChargeKey(), PersistentDataType.FLOAT),
+                    container.get(ArtGunStand.plugin.getProjectileKey(), Cartridge.getEmpty())));
+        return Optional.empty();
+    }
+
+    @Override
     public boolean isExist(){
         return stand != null;
     }
 
-    public ArmorStand getStand(){
+    @Override
+    public ArmorStand getEntity(){
         return stand;
     }
 
-    public static Optional<ArtGun> getFromStand(ArmorStand stand){
-        PersistentDataContainer container = stand.getPersistentDataContainer();
-        if(container.has(plugin.getMaxChargeKey()) &&
-                container.has(plugin.getSpreadKey()) &&
-                container.has(plugin.getProjectileKey()))
-            return Optional.of(new ArtGun(stand,
-                container.get(plugin.getSpreadKey(), PersistentDataType.FLOAT),
-                container.get(plugin.getMaxChargeKey(), PersistentDataType.FLOAT),
-                container.get(plugin.getProjectileKey(), Cartridge.getEmpty())));
-        return Optional.empty();
-    }
-
+    @Override
     public Boolean shoot(){
         if(cartridge != null && cartridge.getPower() != 0){
             if(cartridge.getCharge() >= maxCharge) blowUp();
@@ -83,10 +88,12 @@ public class ArtGun {
         }
         return false;
     }
+    @Override
     public void point(Location loc){
         point(loc.getPitch(), loc.getYaw());
     }
 
+    @Override
     public void point(float pitch, float yaw){
         if(stand != null){
             Location loc = stand.getLocation();
@@ -96,6 +103,7 @@ public class ArtGun {
         }
     }
 
+    @Override
     public void reload(Cartridge cartridge1){
         if(cartridge1.getPower()==0 && cartridge1.getWeight() == 0 )
             this.cartridge.setCharge(cartridge1.getCharge());
@@ -107,6 +115,7 @@ public class ArtGun {
         if (isExist())
             stand.getPersistentDataContainer().set(plugin.getProjectileKey(), Cartridge.getEmpty(), cartridge);
     }
+    @Override
     public void blowUp(){
         stand.getWorld().createExplosion(stand.getLocation(), 10);
     }
