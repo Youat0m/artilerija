@@ -1,6 +1,9 @@
 package youat0m.artilerija;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Artilerija extends JavaPlugin {
@@ -21,17 +24,36 @@ public final class Artilerija extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getCommand("shoot").setExecutor(new ShootExecutor());
-        getCommand("summonArt").setExecutor(new SummonManager());
-        getCommand("createProjectile").setExecutor(new CreateProjectile());
-        getCommand("reloadGun").setExecutor(new ReloadExecutor());
-        getCommand("pointGun").setExecutor(new PointExecutor());
+
+        saveDefaultConfig();
+
         getServer().getPluginManager().registerEvents(new ExplosionHandler(), this);
+        if(getConfig().getBoolean("dummyPlugin.commands")) {
+            getCommand("shoot").setExecutor(new ShootExecutor());
+            getCommand("summonArt").setExecutor(new SummonManager());
+            getCommand("createProjectile").setExecutor(new CreateProjectile());
+            getCommand("reloadGun").setExecutor(new ReloadExecutor());
+            getCommand("pointGun").setExecutor(new PointExecutor());
+        }
+        if(getConfig().getBoolean("dummyPlugin.crafts")){
+            registerCrafts();
+        }
+    }
+
+    private void registerCrafts() {
+        ShapedRecipe catridgeResipe = new ShapedRecipe(new NamespacedKey(this, "catridge"),
+                Cartridge.create(5, 5, 15));
+        catridgeResipe.setIngredient('P', Material.GUNPOWDER);
+        catridgeResipe.setIngredient('0', Material.TNT);
+        catridgeResipe.setIngredient('I', Material.IRON_INGOT);
+        catridgeResipe.shape(" 0 ", "IPI", "PPP");
+
+        Bukkit.addRecipe(catridgeResipe);
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        saveConfig();
     }
 
     public static Artilerija getInstance() {

@@ -1,0 +1,3 @@
+dummyPlugin:
+  commands: true
+  crafts: true

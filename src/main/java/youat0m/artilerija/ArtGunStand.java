@@ -47,7 +47,7 @@ public class ArtGunStand implements IArtGun {
         return this.stand;
     }
 
-    static public Optional<IArtGun> getFromStand(ArmorStand stand){
+    static public Optional<ArtGunStand> getFromStand(ArmorStand stand){
         PersistentDataContainer container = stand.getPersistentDataContainer();
         if(container.has(ArtGunStand.plugin.getMaxChargeKey()) &&
                 container.has(ArtGunStand.plugin.getSpreadKey()) &&
@@ -67,6 +67,16 @@ public class ArtGunStand implements IArtGun {
     @Override
     public ArmorStand getEntity(){
         return stand;
+    }
+
+    @Override
+    public float getMaxCharge() {
+        return this.maxCharge;
+    }
+
+    @Override
+    public float getSpread() {
+        return this.spread;
     }
 
     @Override
@@ -104,6 +114,15 @@ public class ArtGunStand implements IArtGun {
     }
 
     @Override
+    public void setCartridge(Cartridge cartridge1) {
+
+    }
+
+    @Override
+    public Cartridge getCatridge() {
+        return null;
+    }
+
     public void reload(Cartridge cartridge1){
         if(cartridge1.getPower()==0 && cartridge1.getWeight() == 0 )
             this.cartridge.setCharge(cartridge1.getCharge());
@@ -114,10 +133,6 @@ public class ArtGunStand implements IArtGun {
             this.cartridge = cartridge1;
         if (isExist())
             stand.getPersistentDataContainer().set(plugin.getProjectileKey(), Cartridge.getEmpty(), cartridge);
-    }
-    @Override
-    public void blowUp(){
-        stand.getWorld().createExplosion(stand.getLocation(), 10);
     }
 
 
