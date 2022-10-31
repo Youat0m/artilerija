@@ -33,7 +33,7 @@ public interface IArtGun {
             arr.setDamage(getCatridge().getPower());
             arr.setColor(Color.RED);
             arr.setGlowing(true);
-            arr.customName(Component.text("atrtelerija"));
+            arr.customName(Component.text("artilerija"));
             setCartridge(Cartridge.getEmpty());
             if(isExist())
                 getEntity().getPersistentDataContainer().set(Artilerija.getInstance().getProjectileKey(), Cartridge.getEmpty(), getCatridge());
