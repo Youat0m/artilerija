@@ -2,7 +2,7 @@ name: Artilerija
 version: '${project.version}'
 main: youat0m.artilerija.Artilerija
 api-version: 1.18
-authors: [ YouAt0m ]
+authors: [ YouAt0m, buggs ]
 commands:
   shoot:
     usage: /shoot
