@@ -24,13 +24,13 @@ public interface IArtGun {
     float getSpread();
 
     default Boolean shoot(){
-        if(getCatridge() != null && getCatridge().getPower() != 0){
-            if(getCatridge().getCharge() >= getMaxCharge()) blowUp();
+        if(getCartridge() != null && getCatridge().getPower() != 0){
+            if(getCartridge().getCharge() >= getMaxCharge()) blowUp();
             float speed = getCatridge().getCharge() / getCatridge().getWeight();
             Location loc = getEntity().getLocation();
             Arrow arr = loc.getWorld().spawnArrow(loc, loc.getDirection(), speed,
                     getSpread());
-            arr.setDamage(getCatridge().getPower());
+            arr.setDamage(getCartridge().getPower());
             arr.setColor(Color.RED);
             arr.setGlowing(true);
             arr.customName(Component.text("artilerija"));
@@ -48,7 +48,7 @@ public interface IArtGun {
 
     void setCartridge(Cartridge cartridge1);
 
-    Cartridge getCatridge();
+    Cartridge getCartridge();
 
     default void blowUp(){
         getEntity().getLocation().createExplosion(10);
