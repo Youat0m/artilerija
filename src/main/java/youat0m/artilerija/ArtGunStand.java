@@ -119,7 +119,7 @@ public class ArtGunStand implements IArtGun {
     }
 
     @Override
-    public Cartridge getCatridge() {
+    public Cartridge getCartridge() {
         return null;
     }
 
