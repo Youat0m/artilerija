@@ -41,12 +41,12 @@ public final class Artilerija extends JavaPlugin {
     }
 
     private void registerCrafts() {
-        ShapedRecipe catridgeResipe = new ShapedRecipe(new NamespacedKey(this, "catridge"),
+        ShapedRecipe cartridgeResipe = new ShapedRecipe(new NamespacedKey(this, "catridge"),
                 Cartridge.create(5, 5, 15));
-        catridgeResipe.setIngredient('P', Material.GUNPOWDER);
-        catridgeResipe.setIngredient('0', Material.TNT);
-        catridgeResipe.setIngredient('I', Material.IRON_INGOT);
-        catridgeResipe.shape(" 0 ", "IPI", "PPP");
+        cartridgeResipe.setIngredient('P', Material.GUNPOWDER);
+        cartridgeResipe.setIngredient('0', Material.TNT);
+        cartridgeResipe.setIngredient('I', Material.IRON_INGOT);
+        cartridgeResipe.shape(" 0 ", "IPI", "PPP");
 
         Bukkit.addRecipe(catridgeResipe);
     }
