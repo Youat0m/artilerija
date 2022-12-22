@@ -25,6 +25,8 @@ public final class Artilerija extends JavaPlugin {
     @Override
     public void onEnable() {
 
+        getLogger().info("шалом");
+
         saveDefaultConfig();
 
         getServer().getPluginManager().registerEvents(new ExplosionHandler(), this);
@@ -41,19 +43,24 @@ public final class Artilerija extends JavaPlugin {
     }
 
     private void registerCrafts() {
-        ShapedRecipe cartridgeResipe = new ShapedRecipe(new NamespacedKey(this, "catridge"),
+        ShapedRecipe cartridgeResipe = new ShapedRecipe(new NamespacedKey(this, "cartridge"),
                 Cartridge.create(5, 5, 15));
-        cartridgeResipe.setIngredient('P', Material.GUNPOWDER);
+        cartridgeResipe.shape(" 0 ", "ipi", "ppp");
+        cartridgeResipe.setIngredient('p', Material.GUNPOWDER);
         cartridgeResipe.setIngredient('0', Material.TNT);
-        cartridgeResipe.setIngredient('I', Material.IRON_INGOT);
-        cartridgeResipe.shape(" 0 ", "IPI", "PPP");
+        cartridgeResipe.setIngredient('i', Material.IRON_INGOT);
 
-        Bukkit.addRecipe(catridgeResipe);
+        Bukkit.addRecipe(cartridgeResipe);
     }
 
     @Override
     public void onDisable() {
         saveConfig();
+        try{
+            Bukkit.removeRecipe(new NamespacedKey(this, "cartridge"));
+        } catch (Exception ignored) {
+
+        }
     }
 
     public static Artilerija getInstance() {

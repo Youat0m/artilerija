@@ -9,11 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class SummonManager implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(sender instanceof Player p){
-            IArtGun gun = new ArtGunStand(Float.parseFloat(args[0]), Float.parseFloat(args[1]));
-            gun.create(p.getLocation());
-            return true;
-        }
+        //todo скоро будет
         return false;
     }
 }

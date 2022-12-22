@@ -3,13 +3,18 @@ package youat0m.artilerija;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Optional;
+
+import youat0m.artilerija.nms.NMSEnity;
 
 //todo переписать под интерфейс
 public class ArtGunStand implements IArtGun {
@@ -19,24 +24,30 @@ public class ArtGunStand implements IArtGun {
     private final float maxCharge;
     private final float spread;
     private Cartridge cartridge = Cartridge.getEmpty();
-    private ArmorStand stand;
+    private Entity stand;
+    private final Component name;
+    private final EntityType type = EntityType.ZOMBIE;
 
-    public ArtGunStand(ArmorStand stand, float spread, float maxCharge, Cartridge cartridge) {
+    public ArtGunStand(Entity stand, float spread, float maxCharge, Cartridge cartridge, Component name) {
         this.spread = spread;
         this.stand = stand;
         this.maxCharge = maxCharge;
         this.cartridge = cartridge;
+        this.name = name;
     }
 
-    public ArtGunStand(float maxCharge, float spread) {
+    public ArtGunStand(float maxCharge, float spread, Component name) {
         this.maxCharge = maxCharge;
         this.spread = spread;
+        this.name = name;
     }
 
     @Override
     public Entity create(Location loc){
         if(stand ==  null) {
-            stand = loc.getWorld().spawn(loc, ArmorStand.class);
+            var a = new NMSEnity(loc, this.name, En);
+            stand = a.getBukkitEntity();
+            ((CraftWorld)loc.getWorld()).getHandle().addFreshEntity(a, CreatureSpawnEvent.SpawnReason.CUSTOM);
         }else{
             stand.teleport(loc);
         }
@@ -47,7 +58,7 @@ public class ArtGunStand implements IArtGun {
         return this.stand;
     }
 
-    static public Optional<ArtGunStand> getFromStand(ArmorStand stand){
+    static public Optional<ArtGunStand> getFromStand(Entity stand){
         PersistentDataContainer container = stand.getPersistentDataContainer();
         if(container.has(ArtGunStand.plugin.getMaxChargeKey()) &&
                 container.has(ArtGunStand.plugin.getSpreadKey()) &&
@@ -55,7 +66,8 @@ public class ArtGunStand implements IArtGun {
             return Optional.of(new ArtGunStand(stand,
                     container.get(ArtGunStand.plugin.getSpreadKey(), PersistentDataType.FLOAT),
                     container.get(ArtGunStand.plugin.getMaxChargeKey(), PersistentDataType.FLOAT),
-                    container.get(ArtGunStand.plugin.getProjectileKey(), Cartridge.getEmpty())));
+                    container.get(ArtGunStand.plugin.getProjectileKey(), Cartridge.getEmpty()),
+                    stand.customName());
         return Optional.empty();
     }
 
