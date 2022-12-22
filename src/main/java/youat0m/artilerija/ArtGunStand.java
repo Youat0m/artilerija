@@ -1,13 +1,11 @@
 package youat0m.artilerija;
 
-import net.kyori.adventure.text.Component;
+import net.minecraft.network.chat.Component;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
+import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -45,7 +43,7 @@ public class ArtGunStand implements IArtGun {
     @Override
     public Entity create(Location loc){
         if(stand ==  null) {
-            var a = new NMSEnity(loc, this.name, En);
+            var a = new NMSEnity(loc, this.name, net.minecraft.world.entity.EntityType.ZOMBIE);
             stand = a.getBukkitEntity();
             ((CraftWorld)loc.getWorld()).getHandle().addFreshEntity(a, CreatureSpawnEvent.SpawnReason.CUSTOM);
         }else{
@@ -67,7 +65,7 @@ public class ArtGunStand implements IArtGun {
                     container.get(ArtGunStand.plugin.getSpreadKey(), PersistentDataType.FLOAT),
                     container.get(ArtGunStand.plugin.getMaxChargeKey(), PersistentDataType.FLOAT),
                     container.get(ArtGunStand.plugin.getProjectileKey(), Cartridge.getEmpty()),
-                    stand.customName());
+                    ((CraftEntity)stand).getHandle().getName()));
         return Optional.empty();
     }
 
@@ -77,7 +75,7 @@ public class ArtGunStand implements IArtGun {
     }
 
     @Override
-    public ArmorStand getEntity(){
+    public Entity getEntity(){
         return stand;
     }
 
@@ -96,13 +94,13 @@ public class ArtGunStand implements IArtGun {
         if(cartridge != null && cartridge.getPower() != 0){
             if(cartridge.getCharge() >= maxCharge) blowUp();
             float speed = cartridge.getCharge() / cartridge.getWeight();
-            Location loc = stand.getEyeLocation();
+            Location loc = ((LivingEntity) stand).getEyeLocation();
             Arrow arr = loc.getWorld().spawnArrow(loc, loc.getDirection(), speed,
                     this.spread);
             arr.setDamage(cartridge.getPower());
             arr.setColor(Color.RED);
             arr.setGlowing(true);
-            arr.customName(Component.text("atrtelerija"));
+            arr.customName(net.kyori.adventure.text.Component.text("atrtelerija"));
             cartridge = Cartridge.getEmpty();
             if(isExist())
                 stand.getPersistentDataContainer().set(plugin.getProjectileKey(), Cartridge.getEmpty(), cartridge);
