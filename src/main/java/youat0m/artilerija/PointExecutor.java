@@ -10,8 +10,9 @@ import org.jetbrains.annotations.NotNull;
 public class PointExecutor implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(args.length >= 2 && sender instanceof Player p && ArtGunStand.getFromStand((ArmorStand) p.getTargetEntity(3)).isPresent()){
-            IArtGun gun = ArtGunStand.getFromStand((ArmorStand) p.getTargetEntity(3)).get();
+        if(args.length >= 2 && sender instanceof Player p && p.getTargetEntity(3) != null &&
+                ArtGunStand.check(p.getTargetEntity(3))){
+            IArtGun gun = new ArtGunStand(p.getTargetEntity(3));
             try {
                 gun.point(Float.parseFloat(args[0]), Float.parseFloat(args[1]));
             }catch (NumberFormatException e){

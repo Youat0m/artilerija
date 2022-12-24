@@ -24,20 +24,29 @@ public class ArtGunStand implements IArtGun {
     private Cartridge cartridge = Cartridge.getEmpty();
     private Entity stand;
     private final Component name;
-    private final EntityType type = EntityType.ZOMBIE;
-
-    public ArtGunStand(Entity stand, float spread, float maxCharge, Cartridge cartridge, Component name) {
-        this.spread = spread;
-        this.stand = stand;
-        this.maxCharge = maxCharge;
-        this.cartridge = cartridge;
-        this.name = name;
-    }
+    private final EntityType type;
 
     public ArtGunStand(float maxCharge, float spread, Component name) {
         this.maxCharge = maxCharge;
         this.spread = spread;
         this.name = name;
+        this.type = EntityType.ZOMBIE;
+    }
+
+    public ArtGunStand(Entity entity) throws NullPointerException{
+        if(!check(entity)) throw new NullPointerException();
+        PersistentDataContainer container = entity.getPersistentDataContainer();
+        this.spread = container.get(ArtGunStand.plugin.getSpreadKey(), PersistentDataType.FLOAT);
+        this.maxCharge = container.get(ArtGunStand.plugin.getMaxChargeKey(), PersistentDataType.FLOAT);
+        this.cartridge = container.get(ArtGunStand.plugin.getProjectileKey(), Cartridge.getEmpty());
+        this.name = ((CraftEntity)stand).getHandle().getName();
+        this.type = entity.getType();
+    }
+
+    public static boolean check(Entity entity){
+        PersistentDataContainer container = entity.getPersistentDataContainer();
+        return container.has(plugin.getSpreadKey()) && container.has(plugin.getProjectileKey()) &&
+                container.has(plugin.getMaxChargeKey());
     }
 
     @Override
@@ -54,19 +63,6 @@ public class ArtGunStand implements IArtGun {
         container.set(plugin.getMaxChargeKey(), PersistentDataType.FLOAT, maxCharge);
         container.set(plugin.getProjectileKey(), Cartridge.getEmpty(), cartridge);
         return this.stand;
-    }
-
-    static public Optional<ArtGunStand> getFromStand(Entity stand){
-        PersistentDataContainer container = stand.getPersistentDataContainer();
-        if(container.has(ArtGunStand.plugin.getMaxChargeKey()) &&
-                container.has(ArtGunStand.plugin.getSpreadKey()) &&
-                container.has(ArtGunStand.plugin.getProjectileKey()))
-            return Optional.of(new ArtGunStand(stand,
-                    container.get(ArtGunStand.plugin.getSpreadKey(), PersistentDataType.FLOAT),
-                    container.get(ArtGunStand.plugin.getMaxChargeKey(), PersistentDataType.FLOAT),
-                    container.get(ArtGunStand.plugin.getProjectileKey(), Cartridge.getEmpty()),
-                    ((CraftEntity)stand).getHandle().getName()));
-        return Optional.empty();
     }
 
     @Override

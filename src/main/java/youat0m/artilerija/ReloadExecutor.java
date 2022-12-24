@@ -10,10 +10,10 @@ import org.jetbrains.annotations.NotNull;
 public class ReloadExecutor implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(sender instanceof Player p && p.getTargetEntity(3) != null && p.getTargetEntity(3) instanceof ArmorStand &&
-                ArtGunStand.getFromStand((ArmorStand) p.getTargetEntity(3)).isPresent()){
+        if(sender instanceof Player p && p.getTargetEntity(3) != null &&
+                ArtGunStand.check(p.getTargetEntity(3))){
             Cartridge.getProjectile(p.getInventory().getItemInMainHand()).ifPresent((Cartridge c) -> {
-                ArtGunStand.getFromStand((ArmorStand)p.getTargetEntity(3)).get().reload(c);
+                new ArtGunStand(p.getTargetEntity(3)).reload(c);
                 p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
             });
         }else return false;
