@@ -3,13 +3,9 @@ package youat0m.artilerija;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
-
-import java.util.Optional;
+import org.bukkit.entity.LivingEntity;
 
 public interface IArtGun {
 
@@ -27,13 +23,14 @@ public interface IArtGun {
         if(getCartridge() != null && getCartridge().getPower() > 0){
             if(getCartridge().getCharge() >= getMaxCharge()) blowUp();
             float speed = getCartridge().getCharge() / getCartridge().getWeight();
-            Location loc = getEntity().getLocation();
+            Location loc = ((LivingEntity) getEntity()).getEyeLocation();
             Arrow arr = loc.getWorld().spawnArrow(loc, loc.getDirection(), speed,
                     getSpread());
             arr.setDamage(getCartridge().getPower());
             arr.setColor(Color.RED);
             arr.setGlowing(true);
             arr.customName(Component.text("artilerija"));
+            arr.getPersistentDataContainer().set(Artilerija.getInstance().getProjectileKey(), Cartridge.getEmpty(), getCartridge());
             setCartridge(Cartridge.getEmpty());
             if(isExist())
                 getEntity().getPersistentDataContainer().set(Artilerija.getInstance().getProjectileKey(), Cartridge.getEmpty(), getCartridge());

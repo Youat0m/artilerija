@@ -39,7 +39,7 @@ public class Cartridge implements ICartridge {
     }
 
 
-    public static ItemStack create(float power, float weight, float charge){
+    public static ItemStack createItem(float power, float weight, float charge){
         ItemStack projectile = new ItemStack(Material.POISONOUS_POTATO);
         ItemMeta meta = projectile.getItemMeta();
         meta.setCustomModelData(715122);
@@ -53,11 +53,11 @@ public class Cartridge implements ICartridge {
         return projectile;
     }
 
-    public static ItemStack create(Cartridge cartridge){
-        return create(cartridge.power, cartridge.getWeight(), cartridge.getCharge());
+    public static ItemStack createItem(Cartridge cartridge){
+        return createItem(cartridge.power, cartridge.getWeight(), cartridge.getCharge());
     }
 
-    public static Optional<Cartridge> getProjectile(ItemStack stack){
+    public static Optional<Cartridge> getProjectileFromItem(ItemStack stack){
         if(stack.getItemMeta() == null) return Optional.empty();
         PersistentDataContainer container = stack.getItemMeta().getPersistentDataContainer();
         if(container.has(plugn.getPowerKey()) && container.has(plugn.getWeightKey()) && container.has(plugn.getChargeKey())){
@@ -104,5 +104,12 @@ public class Cartridge implements ICartridge {
     public void explode(Location loc, Entity entity) {
         loc.createExplosion(this.getPower());
         entity.remove();
+    }
+
+    @Override
+    public boolean equals(ICartridge o) {
+        if(o instanceof Cartridge c)
+            return ICartridge.super.equals(o) && this.getPower() == c.getPower();
+        return false;
     }
 }

@@ -65,7 +65,10 @@ public interface ICartridge extends PersistentDataType<byte[], Cartridge>, Seria
         return new Cartridge(0, 0, 0);
     }
 
-    boolean equals(Object o);
+
+    default boolean equals(ICartridge o){
+        return this.getCharge() == o.getCharge() && this.getWeight()==o.getWeight();
+    }
 
     void explode(Location loc, Entity entity);
 }

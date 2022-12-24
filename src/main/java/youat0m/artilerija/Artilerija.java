@@ -44,7 +44,7 @@ public final class Artilerija extends JavaPlugin {
 
     private void registerCrafts() {
         ShapedRecipe cartridgeResipe = new ShapedRecipe(new NamespacedKey(this, "cartridge"),
-                Cartridge.create(5, 5, 15));
+                Cartridge.createItem(5, 5, 15));
         cartridgeResipe.shape(" 0 ", "ipi", "ppp");
         cartridgeResipe.setIngredient('p', Material.GUNPOWDER);
         cartridgeResipe.setIngredient('0', Material.TNT);

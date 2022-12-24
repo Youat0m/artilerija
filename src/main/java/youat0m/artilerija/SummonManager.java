@@ -1,6 +1,5 @@
 package youat0m.artilerija;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
