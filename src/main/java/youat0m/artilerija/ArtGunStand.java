@@ -41,6 +41,7 @@ public class ArtGunStand implements IArtGun {
         this.cartridge = container.get(ArtGunStand.plugin.getProjectileKey(), Cartridge.getEmpty());
         this.name = ((CraftEntity)stand).getHandle().getName();
         this.type = entity.getType();
+        this.stand = entity;
     }
 
     public static boolean check(Entity entity){
