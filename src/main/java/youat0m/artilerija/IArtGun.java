@@ -1,13 +1,16 @@
 package youat0m.artilerija;
 
 import net.kyori.adventure.text.Component;
+import net.minecraft.world.entity.EntityType;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
-public interface IArtGun {
+import java.io.Serializable;
+
+public interface IArtGun extends Serializable {
 
     Entity create(Location loc);
 
@@ -44,6 +47,8 @@ public interface IArtGun {
     void point(float pitch, float yaw);
 
     void setCartridge(Cartridge cartridge1);
+
+    EntityType<?> getType();
 
     Cartridge getCartridge();
 

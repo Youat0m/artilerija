@@ -1,11 +1,12 @@
 package youat0m.artilerija;
 
-import net.minecraft.network.chat.Component;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.minecraft.world.entity.EntityType;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -19,11 +20,11 @@ public class ArtGunStand implements IArtGun {
     private final float maxCharge;
     private final float spread;
     private Cartridge cartridge = Cartridge.getEmpty();
-    private Entity stand;
-    private final Component name;
-    private final EntityType type;
+    private transient Entity stand;
+    private final String name;
+    private final transient EntityType<?> type;
 
-    public ArtGunStand(float maxCharge, float spread, Component name) {
+    public ArtGunStand(float maxCharge, float spread, String name) {
         this.maxCharge = maxCharge;
         this.spread = spread;
         this.name = name;
@@ -37,8 +38,8 @@ public class ArtGunStand implements IArtGun {
         this.spread = container.get(ArtGunStand.plugin.getSpreadKey(), PersistentDataType.FLOAT);
         this.maxCharge = container.get(ArtGunStand.plugin.getMaxChargeKey(), PersistentDataType.FLOAT);
         this.cartridge = container.get(ArtGunStand.plugin.getProjectileKey(), Cartridge.getEmpty());
-        this.name = ((CraftEntity)stand).getHandle().getName();
-        this.type = entity.getType();
+        this.name = PlainTextComponentSerializer.plainText().serialize(stand.customName());
+        this.type = ((CraftEntity)entity).getHandle().getType();
 
     }
 
@@ -48,20 +49,22 @@ public class ArtGunStand implements IArtGun {
                 container.has(plugin.getMaxChargeKey());
     }
 
-    @Override
-    public Entity create(Location loc){
-        if(stand ==  null) {
-            var a = new NMSEnity(loc, this.name, net.minecraft.world.entity.EntityType.ZOMBIE);
-            stand = a.getBukkitEntity();
-            ((CraftWorld)loc.getWorld()).getHandle().addFreshEntity(a, CreatureSpawnEvent.SpawnReason.CUSTOM);
-        }else{
-            stand.teleport(loc);
-        }
+    public Entity create(Location loc, String type){
+        var a = new NMSEnity(loc, EntityType.byString("minecraft:" + type).orElseThrow());
+        stand = a.getBukkitEntity();
+        ((CraftWorld)loc.getWorld()).getHandle().addFreshEntity(a, CreatureSpawnEvent.SpawnReason.CUSTOM);
         PersistentDataContainer container = stand.getPersistentDataContainer();
         container.set(plugin.getSpreadKey(), PersistentDataType.FLOAT, spread);
         container.set(plugin.getMaxChargeKey(), PersistentDataType.FLOAT, maxCharge);
         container.set(plugin.getProjectileKey(), Cartridge.getEmpty(), cartridge);
+        stand.setCustomNameVisible(true);
+        stand.customName(Component.text(name));
         return this.stand;
+    }
+
+    @Override
+    public Entity create(Location loc) {
+        return create(loc, type.id);
     }
 
     @Override
@@ -101,12 +104,17 @@ public class ArtGunStand implements IArtGun {
 
     @Override
     public void setCartridge(Cartridge cartridge1) {
+        cartridge = cartridge1;
+    }
 
+    @Override
+    public EntityType<?> getType() {
+        return type;
     }
 
     @Override
     public Cartridge getCartridge() {
-        return null;
+        return cartridge;
     }
 
     public void reload(Cartridge cartridge1){
@@ -120,6 +128,8 @@ public class ArtGunStand implements IArtGun {
         if (isExist())
             stand.getPersistentDataContainer().set(plugin.getProjectileKey(), Cartridge.getEmpty(), cartridge);
     }
+
+
 
 
 }

@@ -5,10 +5,15 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
+import youat0m.artilerija.Utils.SerializedGun;
+
+import java.io.*;
+import java.util.ArrayList;
 
 public final class Artilerija extends JavaPlugin {
 
     private static Artilerija instanse;
+    private File file = new File(getDataFolder() + File.separator + "arta.bin");
 
     public Artilerija(){
         instanse = this;
@@ -26,8 +31,23 @@ public final class Artilerija extends JavaPlugin {
     public void onEnable() {
 
         getLogger().info("шалом");
-
         saveDefaultConfig();
+
+
+        if (file.exists()) {
+            try(ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file)))
+            {
+                ((ArrayList<SerializedGun>)inputStream.readObject()).forEach(SerializedGun::create);
+            }
+            catch(IOException ex){
+                ex.printStackTrace();
+            }
+            catch (ClassNotFoundException e){
+                getLogger().warning("файл arta.bin повреждён");
+                e.printStackTrace();
+            }
+        }else
+            getLogger().info("запись о установках отсутствует");
 
         getServer().getPluginManager().registerEvents(new ExplosionHandler(), this);
         if(getConfig().getBoolean("dummyPlugin.commands")) {
@@ -56,13 +76,38 @@ public final class Artilerija extends JavaPlugin {
     @Override
     public void onDisable() {
         saveConfig();
-        try{
+        try {
             Bukkit.removeRecipe(new NamespacedKey(this, "cartridge"));
         } catch (Exception ignored) {
 
         }
-    }
 
+
+        ArrayList<SerializedGun> list = new ArrayList<>();
+        getServer().getWorld("world").getEntities().forEach(entity -> {
+            if (ArtGunStand.check(entity)) {
+
+                list.add(new SerializedGun(new ArtGunStand(entity)));
+                entity.remove();
+            }
+        });
+
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file))) {
+            outputStream.writeObject(list);
+        } catch (FileNotFoundException fileNotFoundException) {
+            fileNotFoundException.printStackTrace();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+
+    }
     public static Artilerija getInstance() {
         return instanse;
     }
