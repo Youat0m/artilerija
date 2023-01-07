@@ -11,7 +11,7 @@ public class PointExecutor implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(args.length >= 2 && sender instanceof Player p && p.getTargetEntity(3) != null &&
                 ArtGunStand.check(p.getTargetEntity(3))){
-            IArtGun gun = new ArtGunStand(p.getTargetEntity(3));
+            ArtGunStand gun = new ArtGunStand(p.getTargetEntity(3));
             try {
                 gun.point(Float.parseFloat(args[0]), Float.parseFloat(args[1]));
             }catch (NumberFormatException e){

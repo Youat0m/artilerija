@@ -11,7 +11,7 @@ public class SummonManager implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(sender instanceof Player p){
-            IArtGun gun = new ArtGunStand(Float.parseFloat(args[0]), Float.parseFloat(args[1]), args[2]);
+            ArtGunStand gun = new ArtGunStand(Float.parseFloat(args[0]), Float.parseFloat(args[1]), args[2]);
             gun.create(p.getLocation());
             return true;
         }

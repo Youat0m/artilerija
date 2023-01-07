@@ -9,7 +9,6 @@ import youat0m.artilerija.Utils.SerializedGun;
 
 import java.io.*;
 import java.util.ArrayList;
-
 public final class Artilerija extends JavaPlugin {
 
     private static Artilerija instanse;

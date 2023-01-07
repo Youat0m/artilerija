@@ -3,17 +3,22 @@ package youat0m.artilerija;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minecraft.world.entity.EntityType;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import youat0m.artilerija.nms.NMSEnity;
 
+import java.io.Serializable;
+
 //todo переписать под интерфейс
-public class ArtGunStand implements IArtGun {
+public class ArtGunStand implements Serializable {
 
     private final static Artilerija plugin = Artilerija.getInstance();
 
@@ -62,37 +67,37 @@ public class ArtGunStand implements IArtGun {
         return this.stand;
     }
 
-    @Override
+     
     public Entity create(Location loc) {
         return create(loc, type.id);
     }
 
-    @Override
+     
     public boolean isExist(){
         return stand != null;
     }
 
-    @Override
+     
     public Entity getEntity(){
         return stand;
     }
 
-    @Override
+     
     public float getMaxCharge() {
         return this.maxCharge;
     }
 
-    @Override
+     
     public float getSpread() {
         return this.spread;
     }
 
-    @Override
+
     public void point(Location loc){
         point(loc.getPitch(), loc.getYaw());
     }
 
-    @Override
+     
     public void point(float pitch, float yaw){
         if(stand != null){
             Location loc = stand.getLocation();
@@ -102,17 +107,20 @@ public class ArtGunStand implements IArtGun {
         }
     }
 
-    @Override
+     
     public void setCartridge(Cartridge cartridge1) {
         cartridge = cartridge1;
     }
 
-    @Override
+     
     public EntityType<?> getType() {
         return type;
     }
 
-    @Override
+    public void blowUp(){
+        getEntity().getLocation().createExplosion(getCartridge().getCharge());
+    }
+     
     public Cartridge getCartridge() {
         return cartridge;
     }
@@ -127,6 +135,26 @@ public class ArtGunStand implements IArtGun {
             this.cartridge = cartridge1;
         if (isExist())
             stand.getPersistentDataContainer().set(plugin.getProjectileKey(), Cartridge.getEmpty(), cartridge);
+    }
+
+     public Boolean shoot(){
+        if(getCartridge() != null && getCartridge().getPower() > 0){
+            if(getCartridge().getCharge() >= getMaxCharge()) blowUp();
+            float speed = getCartridge().getCharge() / getCartridge().getWeight();
+            Location loc = ((LivingEntity) getEntity()).getEyeLocation();
+            Arrow arr = loc.getWorld().spawnArrow(loc, loc.getDirection(), speed,
+                    getSpread());
+            arr.setDamage(getCartridge().getPower());
+            arr.setColor(Color.RED);
+            arr.setGlowing(true);
+            arr.customName(Component.text("artilerija"));
+            arr.getPersistentDataContainer().set(Artilerija.getInstance().getProjectileKey(), Cartridge.getEmpty(), getCartridge());
+            setCartridge(Cartridge.getEmpty());
+            if(isExist())
+                getEntity().getPersistentDataContainer().set(Artilerija.getInstance().getProjectileKey(), Cartridge.getEmpty(), getCartridge());
+            return true;
+        }
+        return false;
     }
 
 
