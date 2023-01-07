@@ -13,11 +13,11 @@ public class ExplosionHandler implements Listener {
         NamespacedKey key = Artilerija.getInstance().getProjectileKey();
         PersistentDataContainer container = e.getEntity().getPersistentDataContainer();
         if(container.has(key)) {
-            Location loc;
-            if(e.getHitBlock() != null)
-                loc = e.getHitBlock().getLocation();
-            else loc = e.getHitEntity().getLocation();
-            container.get(key, Cartridge.getEmpty()).explode(loc, e.getEntity());
+            Cartridge c = container.get(key, Cartridge.getEmpty());
+            if(e.getHitBlock() != null){
+                c.explode(e.getEntity(), e.getHitBlock());
+            } else
+                c.explode(e.getEntity(), e.getHitEntity());
         }
     }
 }

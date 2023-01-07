@@ -1,7 +1,9 @@
 package youat0m.artilerija;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Projectile;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.io.BukkitObjectInputStream;
@@ -70,5 +72,7 @@ public interface ICartridge extends PersistentDataType<byte[], Cartridge>, Seria
         return this.getCharge() == o.getCharge() && this.getWeight()==o.getWeight();
     }
 
-    void explode(Location loc, Entity entity);
+    void explode(Projectile projectile, Entity target);
+
+    void explode(Projectile projectile, Block target);
 }

@@ -4,9 +4,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.Metadatable;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -101,9 +105,16 @@ public class Cartridge implements ICartridge {
     }
 
     @Override
-    public void explode(Location loc, Entity entity) {
-        loc.createExplosion(this.getPower());
-        entity.remove();
+    public void explode(Projectile projectile, Block target) {;
+        target.getLocation().createExplosion(this.getPower());
+        projectile.remove();
+    }
+
+    @Override
+    public void explode(Projectile projectile, Entity target) {
+        if(target instanceof Damageable d) d.damage(getWeight()*5);
+        target.getLocation().createExplosion(this.getPower());
+        projectile.remove();
     }
 
     @Override
@@ -112,4 +123,5 @@ public class Cartridge implements ICartridge {
             return ICartridge.super.equals(o) && this.getPower() == c.getPower();
         return false;
     }
+
 }
