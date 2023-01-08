@@ -5,6 +5,8 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
+import youat0m.artilerija.Object.ArtGunStand;
+import youat0m.artilerija.Object.Cartridge;
 import youat0m.artilerija.Utils.SerializedGun;
 
 import java.io.*;

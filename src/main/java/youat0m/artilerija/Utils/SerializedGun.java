@@ -1,7 +1,7 @@
 package youat0m.artilerija.Utils;
 
 import org.bukkit.Location;
-import youat0m.artilerija.ArtGunStand;
+import youat0m.artilerija.Object.ArtGunStand;
 import youat0m.artilerija.Artilerija;
 
 import java.io.Serializable;

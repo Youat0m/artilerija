@@ -1,11 +1,11 @@
 package youat0m.artilerija;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import youat0m.artilerija.Object.ArtGunStand;
 
 public class SummonManager implements CommandExecutor {
     @Override

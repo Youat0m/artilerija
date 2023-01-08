@@ -1,6 +1,5 @@
-package youat0m.artilerija;
+package youat0m.artilerija.Object;
 
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;

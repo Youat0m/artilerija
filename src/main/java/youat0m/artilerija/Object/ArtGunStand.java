@@ -1,10 +1,12 @@
-package youat0m.artilerija;
+package youat0m.artilerija.Object;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minecraft.world.entity.EntityType;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity;
 import org.bukkit.entity.Arrow;
@@ -13,6 +15,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import youat0m.artilerija.Artilerija;
 import youat0m.artilerija.nms.NMSEnity;
 
 import java.io.Serializable;
@@ -150,6 +153,8 @@ public class ArtGunStand implements Serializable {
             arr.customName(Component.text("artilerija"));
             arr.getPersistentDataContainer().set(Artilerija.getInstance().getProjectileKey(), Cartridge.getEmpty(), getCartridge());
             setCartridge(Cartridge.getEmpty());
+            loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 10, 1.25f);
+            loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 3);
             if(isExist())
                 getEntity().getPersistentDataContainer().set(Artilerija.getInstance().getProjectileKey(), Cartridge.getEmpty(), getCartridge());
             return true;

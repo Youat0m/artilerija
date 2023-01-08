@@ -1,11 +1,11 @@
 package youat0m.artilerija;
 
-import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.persistence.PersistentDataContainer;
+import youat0m.artilerija.Object.Cartridge;
 
 public class ExplosionHandler implements Listener {
     @EventHandler
